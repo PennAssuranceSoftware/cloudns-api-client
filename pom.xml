@@ -11,7 +11,7 @@
     <artifactId>cloudns-api-client</artifactId>
     <packaging>jar</packaging>
     <name>ClouDNS API Client in Java</name>
-    <version>1.02.00-SNAPSHOT</version>
+    <version>1.00.00-SNAPSHOT</version>
     <description>ClouDNS API Client in Java</description>
 
 
