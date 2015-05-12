@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -43,6 +45,7 @@ import com.pennassurancesoftware.cloudns.dto.DomainZone;
 import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
 import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
+import com.pennassurancesoftware.cloudns.dto.Record;
 import com.pennassurancesoftware.cloudns.dto.Response;
 import com.pennassurancesoftware.cloudns.exception.ClouDnsException;
 import com.pennassurancesoftware.cloudns.exception.RequestUnsuccessfulException;
@@ -87,6 +90,30 @@ public class ClouDnsClient implements ClouDns {
    }
 
    @Override
+   public void addDomainZoneRecord( String domainName, Record record ) {
+      final String recordType = record.getType().value();
+      final String host = record.getHost();
+      final String recordText = record.getRecord();
+      final Integer ttl = record.getTtl();
+      final Integer priority = record.getPriority();
+      final Integer weight = record.getWeight();
+      final Integer port = record.getPort();
+      final Integer frame = record.getFrame();
+      final String frameTitle = record.getFrameTitle();
+      final String frameKeywords = record.getFrameKeywords();
+      final String frameDescription = record.getFrameDescription();
+      final Integer savePath = record.getSavePath();
+      final Integer redirectType = record.getRedirectType();
+      final Integer mail = record.getMail();
+      final Integer txt = record.getTxt();
+      final Integer algorithm = record.getAlgorithm();
+      final Integer fptype = record.getSshFpAlgorithm();
+      final Object[] params = { domainName, recordType, host, recordText, ttl, priority, weight, port, frame, frameTitle, frameKeywords, frameDescription, savePath, redirectType, mail, txt, algorithm, fptype };
+      final Response result = ( Response )perform( new ApiRequest( ApiAction.ADD_DOMAIN_ZONE_RECORD, params ) ).getData();
+      validateResponse( result );
+   }
+
+   @Override
    public void deleteDomainZone( String domainName ) {
       final Object[] params = { domainName };
       final Response result = ( Response )perform( new ApiRequest( ApiAction.DELETE_DOMAIN_ZONE, params ) ).getData();
@@ -94,9 +121,24 @@ public class ClouDnsClient implements ClouDns {
    }
 
    @Override
+   public void deleteDomainZoneRecord( String domainName, Integer recordId ) {
+      final Object[] params = { domainName, recordId };
+      final Response result = ( Response )perform( new ApiRequest( ApiAction.DELETE_DOMAIN_ZONE_RECORD, params ) ).getData();
+      validateResponse( result );
+   }
+
+   @Override
    public List<NameServer> getAvailableNameServers() {
       final NameServer[] result = ( NameServer[] )perform( new ApiRequest( ApiAction.AVAILABLE_NAME_SERVERS ) ).getData();
       return Arrays.asList( result );
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public List<Record> getDomainZoneRecords( String domainName ) {
+      final Object[] params = { domainName };
+      final Map<String, Record> result = ( Map<String, Record> )perform( new ApiRequest( ApiAction.GET_DOMAIN_ZONE_RECORDS, params ) ).getData();
+      return new ArrayList<Record>( result.values() );
    }
 
    @Override
@@ -124,6 +166,31 @@ public class ClouDnsClient implements ClouDns {
       final Object[] params = { domainName };
       final Boolean result = ( Boolean )perform( new ApiRequest( ApiAction.GET_DOMAIN_ZONE_IS_UPDATED, params ) ).getData();
       return result;
+   }
+
+   @Override
+   public void modifyDomainZoneRecord( String domainName, Record record ) {
+      final Integer recordId = record.getId();
+      final String host = record.getHost();
+      final String recordText = record.getRecord();
+      final Integer ttl = record.getTtl();
+      final Integer priority = record.getPriority();
+      final Integer weight = record.getWeight();
+      final Integer port = record.getPort();
+      final Integer frame = record.getFrame();
+      final String frameTitle = record.getFrameTitle();
+      final String frameKeywords = record.getFrameKeywords();
+      final String frameDescription = record.getFrameDescription();
+      final Integer savePath = record.getSavePath();
+      final Integer redirectType = record.getRedirectType();
+      final Integer mail = record.getMail();
+      final Integer txt = record.getTxt();
+      final Integer algorithm = record.getAlgorithm();
+      final Integer fptype = record.getSshFpAlgorithm();
+      final Object[] params = { domainName, recordId, host, recordText, ttl, priority, weight, port, frame, frameTitle, frameKeywords, frameDescription, savePath, redirectType, mail, txt, algorithm, fptype };
+      final Response result = ( Response )perform( new ApiRequest( ApiAction.MODIFY_DOMAIN_ZONE_RECORD, params ) ).getData();
+      validateResponse( result );
+
    }
 
    @Override
@@ -345,7 +412,7 @@ public class ClouDnsClient implements ClouDns {
       final ApiResponse apiResponse = new ApiResponse( request.getApiAction(), true );
 
       try {
-         apiResponse.setData( deserialize.fromJson( response, request.getClazz() ) );
+         apiResponse.setData( deserialize.fromJson( response, request.getResponseType() ) );
       }
       catch( JsonSyntaxException jse ) {
          LOG.error( "Error occurred while parsing response: {}", response, jse );

@@ -20,10 +20,15 @@
  */
 package com.pennassurancesoftware.cloudns.client;
 
+import java.lang.reflect.Type;
+import java.util.Map;
+
+import com.google.gson.reflect.TypeToken;
 import com.pennassurancesoftware.cloudns.dto.DomainZone;
 import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
 import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
+import com.pennassurancesoftware.cloudns.dto.Record;
 import com.pennassurancesoftware.cloudns.dto.Response;
 
 /**
@@ -39,63 +44,22 @@ public enum ApiAction {
    GET_DOMAIN_ZONE_STATS("/get-zones-stats.json", RequestMethod.GET, DomainZoneStats.class),
    GET_DOMAIN_ZONE_UPDATE_STATUS("/update-status.json?domain-name=%s", RequestMethod.GET, NameServerUpdateStatus[].class),
    GET_DOMAIN_ZONE_IS_UPDATED("/is-updated.json?domain-name=%s", RequestMethod.GET, Boolean.class),
-
-   //   GET_ACTION("/action/%s", RequestMethod.GET, Action.class),
-   //   PROVIDERS("/provider", RequestMethod.GET, Providers.class),
-   //   GET_PROVIDER("/provider/%s", RequestMethod.GET, Provider.class),
-   //   REGIONS("/region", RequestMethod.GET, Regions.class),
-   //   GET_REGION("/region/%s/%s", RequestMethod.GET, Region.class),
-   //   NODETYPES("/nodetype", RequestMethod.GET, NodeTypes.class),
-   //   GET_NODETYPE("/nodetype/%s/%s", RequestMethod.GET, NodeType.class),
-   //   NODECLUSTERS("/nodecluster", RequestMethod.GET, NodeClusters.class),
-   //   GET_NODECLUSTER("/nodecluster/%s", RequestMethod.GET, NodeCluster.class),
-   //   CREATE_NODECLUSTER("/nodecluster/", RequestMethod.POST, NodeCluster.class),
-   //   DEPLOY_NODECLUSTER("/nodecluster/%s/deploy/", RequestMethod.POST, NodeCluster.class),
-   //   UPDATE_NODECLUSTER("/nodecluster/%s/", RequestMethod.PATCH, NodeCluster.class),
-   //   UPGRADE_DOCKER_NODECLUSTER("/nodecluster/%s/docker-upgrade/", RequestMethod.POST, NodeCluster.class),
-   //   TERMINATE_NODECLUSTER("/nodecluster/%s/", RequestMethod.DELETE, NodeCluster.class),
-   //   NODES("/node", RequestMethod.GET, Nodes.class),
-   //   GET_NODE("/node/%s", RequestMethod.GET, Node.class),
-   //   DEPLOY_NODE("/node/%s/deploy/", RequestMethod.POST, Node.class),
-   //   UPDATE_NODE("/node/%s/", RequestMethod.PATCH, Node.class),
-   //   UPGRADE_DOCKER_NODE("/node/%s/docker-upgrade/", RequestMethod.POST, Node.class),
-   //   TERMINATE_NODE("/node/%s/", RequestMethod.DELETE, Node.class),
-   //   CREATE_TOKEN("/token/", RequestMethod.POST, Token.class),
-   //   SERVICES("/service", RequestMethod.GET, Services.class),
-   //   CREATE_SERVICE("/service/", RequestMethod.POST, Service.class),
-   //   GET_SERVICE("/service/%s", RequestMethod.GET, Service.class),
-   //   GET_SERVICE_LOGS("/service/%s/logs/", RequestMethod.GET, Logs.class),
-   //   UPDATE_SERVICE("/service/%s/", RequestMethod.PATCH, Service.class),
-   //   START_SERVICE("/service/%s/start/", RequestMethod.POST, Service.class),
-   //   STOP_SERVICE("/service/%s/stop/", RequestMethod.POST, Service.class),
-   //   REDEPLOY_SERVICE("/service/%s/redeploy/", RequestMethod.POST, Service.class),
-   //   TERMINATE_SERVICE("/service/%s/", RequestMethod.DELETE, Service.class),
-   //   CONTAINERS("/container", RequestMethod.GET, Containers.class),
-   //   GET_CONTAINER("/container/%s", RequestMethod.GET, Container.class),
-   //   GET_CONTAINER_LOGS("/container/%s/logs/", RequestMethod.GET, Logs.class),
-   //   START_CONTAINER("/container/%s/start/", RequestMethod.POST, Container.class),
-   //   STOP_CONTAINER("/container/%s/stop/", RequestMethod.POST, Container.class),
-   //   TERMINATE_CONTAINER("/container/%s/", RequestMethod.DELETE, Container.class),
-   //   VOLUMEGROUPS("/volumegroup", RequestMethod.GET, VolumeGroups.class),
-   //   GET_VOLUMEGROUP("/volumegroup/%s", RequestMethod.GET, VolumeGroup.class),
-   //   VOLUMES("/volume", RequestMethod.GET, Volumes.class),
-   //   GET_VOLUME("/volume/%s", RequestMethod.GET, Volume.class),
-   //   TAGS("/%s/%s/tags/", RequestMethod.GET, Tags.class),
-   //   TAG_RESOURCE("/%s/%s/tags/", RequestMethod.POST, Tag[].class),
-   //   DELETE_TAG("/%s/%s/tags/%s/", RequestMethod.DELETE, Tag.class),
-   //   WEBHOOK_HANDLERS("/service/%s/webhook/handler/", RequestMethod.GET, WebhookHandlers.class),
-   //   CREATE_WEBHOOK_HANDLER("/service/%s/webhook/handler/", RequestMethod.POST, WebhookHandler[].class),
-   //   GET_WEBHOOK_HANDLER("/service/%s/webhook/handler/%s/", RequestMethod.GET, WebhookHandler.class),
-   //   DELETE_WEBHOOK_HANDLER("/service/%s/webhook/handler/%s/", RequestMethod.DELETE, WebhookHandler.class),
-   //   CALL_WEBHOOK_HANDLER("/service/%s/webhook/handler/%s/call/", RequestMethod.POST, WebhookHandler.class),
-
+   GET_DOMAIN_ZONE_RECORDS("/records.json?domain-name=%s", RequestMethod.GET, new TypeToken<Map<String, Record>>() {}.getType()),
+   ADD_DOMAIN_ZONE_RECORD(
+         "/add-record.json?domain-name=%s&record-type=%s&host=%s&record=%s&ttl=%s&priority=%s&weight=%s&port=%s&frame=%s&frame-title=%s&frame-keywords=%s&frame-description=%s&save-path=%s&redirect-type=%s&mail=%s&txt=%s&algorithm=%s&fptype=%s",
+         RequestMethod.GET, Response.class),
+   DELETE_DOMAIN_ZONE_RECORD("/delete-record.json?domain-name=%s&record-id=%s", RequestMethod.GET, Response.class),
+   MODIFY_DOMAIN_ZONE_RECORD(
+         "/mod-record.json?domain-name=%s&record-id=%s&host=%s&record=%s&ttl=%s&priority=%s&weight=%s&port=%s&frame=%s&frame-title=%s&frame-keywords=%s&frame-description=%s&save-path=%s&redirect-type=%s&mail=%s&txt=%s&algorithm=%s&fptype=%s",
+         RequestMethod.GET, Response.class),
+         
    ;
 
    private String path;
 
    private RequestMethod method;
 
-   private Class<?> clazz;
+   private Type type;
 
    ApiAction( String path ) {
       this( path, RequestMethod.GET );
@@ -105,10 +69,10 @@ public enum ApiAction {
       this( path, method, null );
    }
 
-   ApiAction( String path, RequestMethod method, Class<?> clazz ) {
+   ApiAction( String path, RequestMethod method, Type type ) {
       this.path = path;
       this.method = method;
-      this.clazz = clazz;
+      this.type = type;
    }
 
    /**
@@ -128,7 +92,7 @@ public enum ApiAction {
    /**
     * @return the clazz
     */
-   public Class<?> getClazz() {
-      return clazz;
+   public Type getResponseType() {
+      return type;
    }
 }

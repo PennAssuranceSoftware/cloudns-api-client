@@ -1,8 +1,12 @@
 package com.pennassurancesoftware.cloudns.dto;
 
+import java.io.Serializable;
+
 import com.google.gson.annotations.SerializedName;
 
-public class DomainZoneStats {
+public class DomainZoneStats implements Serializable {
+   private static final long serialVersionUID = -586646883052896267L;
+   
    @SerializedName("count")
    private Integer numberOfZones;
    private Integer limit;

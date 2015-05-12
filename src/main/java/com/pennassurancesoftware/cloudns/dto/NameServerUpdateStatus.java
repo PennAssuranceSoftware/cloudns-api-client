@@ -1,9 +1,13 @@
 package com.pennassurancesoftware.cloudns.dto;
 
+import java.io.Serializable;
+
 import com.google.gson.annotations.SerializedName;
 
 /** Class that includes details of the update status of a Name Server for a Domain Zone */
-public class NameServerUpdateStatus {
+public class NameServerUpdateStatus implements Serializable {
+   private static final long serialVersionUID = -2397402215833468287L;
+   
    private String ip4;
    private String ip6;
    @SerializedName("server")

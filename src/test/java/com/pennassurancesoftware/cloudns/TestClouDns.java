@@ -10,6 +10,8 @@ import com.pennassurancesoftware.cloudns.dto.DomainZone;
 import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
 import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
+import com.pennassurancesoftware.cloudns.dto.Record;
+import com.pennassurancesoftware.cloudns.type.RecordType;
 import com.pennassurancesoftware.cloudns.type.ZoneType;
 
 public class TestClouDns {
@@ -18,13 +20,49 @@ public class TestClouDns {
 
    private ClouDns client = new ClouDnsClient( AUTH_ID, AUTH_PASSWORD );
 
-   @Test(groups = { "integration" }, enabled = true, dependsOnGroups = "get-domain")
+   @Test(groups = { "integration" }, enabled = true, dependsOnGroups = "get-domain", priority = 100)
    public void testDeleteDomainZone() throws Exception {
       // Fixture
       final String domainName = "domain.com";
 
       // Call
       client.deleteDomainZone( domainName );
+   }
+
+   @Test(groups = { "integration" }, enabled = true, dependsOnGroups = "get-domain", priority = 50)
+   public void testDeleteDomainZoneRecord() throws Exception {
+      // Fixture
+      final String domainName = "domain.com";
+
+      // Call
+      Record delete = null;
+      for( Record record : client.getDomainZoneRecords( domainName ) ) {
+         if( RecordType.CNAME.equals( record.getType() ) ) {
+            delete = record;
+            break;
+         }
+      }
+      Assert.assertNotNull( delete, "Could not find CNAME record to delete." );
+      client.deleteDomainZoneRecord( domainName, delete.getId() );
+   }
+
+   @Test(groups = { "integration", "modify-domain" }, enabled = true, dependsOnGroups = "get-domain", priority = 49)
+   public void testModifyDomainZoneRecord() throws Exception {
+      // Fixture
+      final String domainName = "domain.com";
+
+      // Call
+      Record modify = null;
+      for( Record record : client.getDomainZoneRecords( domainName ) ) {
+         if( RecordType.CNAME.equals( record.getType() ) ) {
+            modify = record;
+            break;
+         }
+      }
+      Assert.assertNotNull( modify, "Could not find CNAME record to delete." );
+      modify.setHost( "blah-modified" );
+      client.modifyDomainZoneRecord( domainName, modify );
+      System.out.println( "Modified Domain Records: " + client.getDomainZoneRecords( domainName ) );
    }
 
    @Test(groups = { "integration" }, enabled = true)
@@ -90,7 +128,19 @@ public class TestClouDns {
       System.out.println( "Domain Updated: " + result );
    }
 
-   @Test(groups = { "integration", "create-domain" }, enabled = true)
+   @Test(groups = { "integration", "get-domain" }, enabled = true, dependsOnGroups = "create-domain")
+   public void testGetDomainZoneRecords() throws Exception {
+      // Fixture
+      final String domainName = "domain.com";
+
+      // Call
+      final List<Record> result = client.getDomainZoneRecords( domainName );
+
+      // Assert
+      System.out.println( "Domain Records: " + result );
+   }
+
+   @Test(groups = { "integration", "create-domain" }, enabled = true, priority = 1)
    public void testRegisterDomainZone() throws Exception {
       // Fixture
       final String domainName = "domain.com";
@@ -98,5 +148,19 @@ public class TestClouDns {
 
       // Call
       client.registerDomainZone( domainName, type );
+   }
+
+   @Test(groups = { "integration", "create-domain" }, enabled = true, dependsOnMethods = "testRegisterDomainZone", priority = 2)
+   public void testAddDomainZoneRecord() throws Exception {
+      // Fixture
+      final String domainName = "domain.com";
+      final Record record = new Record();
+      record.setType( RecordType.CNAME );
+      record.setHost( "blah-test" );
+      record.setRecord( "proxy-16f8311e.pennassurancesoftware.svc.tutum.io" );
+      record.setTtl( 3600 );
+
+      // Call
+      client.addDomainZoneRecord( domainName, record );
    }
 }

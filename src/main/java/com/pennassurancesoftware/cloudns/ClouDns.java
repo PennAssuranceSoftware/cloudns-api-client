@@ -6,6 +6,7 @@ import com.pennassurancesoftware.cloudns.dto.DomainZone;
 import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
 import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
+import com.pennassurancesoftware.cloudns.dto.Record;
 import com.pennassurancesoftware.cloudns.type.ZoneType;
 
 /**
@@ -36,7 +37,7 @@ public interface ClouDns {
     * 
     */
    void registerDomainZone( String domainName, ZoneType type );
-   
+
    /**
     * <a href="https://www.cloudns.net/api-help/dns/delete-domain-zone/">Delete Domain Zone Documentation</a>
     * 
@@ -44,7 +45,7 @@ public interface ClouDns {
     * @param domainName Domain that will be deleted
     */
    void deleteDomainZone( String domainName );
-   
+
    /**
     * 
     * <a href="https://www.cloudns.net/api-help/dns/list-zones/">List Domain Zone Documentation</a>
@@ -53,7 +54,7 @@ public interface ClouDns {
     * @return List of Domain Zones
     */
    List<DomainZone> getDomainZones();
-   
+
    /**
     * 
     * <a href="https://www.cloudns.net/api-help/dns/get-zones-stats/">Domain Zone Stats Documentation</a>
@@ -62,7 +63,7 @@ public interface ClouDns {
     * @return Statistics about account with ClouDNS
     */
    DomainZoneStats getDomainZoneStats();
-   
+
    /**
     * 
     * <a href="https://www.cloudns.net/api-help/dns/domain-update-status/">Domain Zone Update Status Documentation</a>
@@ -72,7 +73,7 @@ public interface ClouDns {
     * @return List of Name Servers and their corresponding update status
     */
    List<NameServerUpdateStatus> getDomainZoneUpdateStatus( String domainName );
-   
+
    /**
     * 
     * <a href="https://www.cloudns.net/api-help/dns/domain-is-updated/">Domain Zone Is Updated Documentation</a>
@@ -81,4 +82,40 @@ public interface ClouDns {
     * @return Flag that indicates the zone is updated
     */
    boolean isDomainZoneUpdated( String domainName );
+
+   /**
+    * 
+    * <a href="https://www.cloudns.net/api-help/records/list-records-domain-zone/">Domain Zone Records Documentation</a>
+    * 
+    * @param domainName Domain Zone to get records for
+    * @return List of records for the specified Domain Zone
+    */
+   List<Record> getDomainZoneRecords( String domainName );
+
+   /**
+    * 
+    * <a href="https://www.cloudns.net/api-help/records/add-record-domain-zone/">Add Domain Zone Record Documentation</a>
+    * 
+    * @param domainName Domain Zone to add the record to
+    * @param record Record to add to the Domain Zone
+    */
+   void addDomainZoneRecord( String domainName, Record record );
+
+   /**
+    * 
+    * <a href="https://www.cloudns.net/api-help/records/delete-record-domain-zone/">Delete Domain Zone Record Documentation</a>
+    * 
+    * @param domainName Domain Zone to delete the record from
+    * @param recordId ID of the record to delete
+    */
+   void deleteDomainZoneRecord( String domainName, Integer recordId );
+
+   /**
+    * 
+    * <a href="https://www.cloudns.net/api-help/records/mod-record-domain-zone/">Modify Domain Zone Record Documentation</a>
+    * 
+    * @param domainName Domain Zone to modify the record in
+    * @param record Record with ID specified and values to update to
+    */
+   void modifyDomainZoneRecord( String domainName, Record record );
 }

@@ -20,6 +20,7 @@
  */
 package com.pennassurancesoftware.cloudns.client;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,8 +92,8 @@ public class ApiRequest {
     * Constructor
     * 
     * @param apiAction a info about api request
-    * @param data a api request body data object
-    * @param params a api request path variable value(s)
+    * @param data a API request body data object
+    * @param params a API request path variable value(s)
     */
    public ApiRequest( ApiAction apiAction, Object data, Object[] params ) {
       this( apiAction, data, params, null );
@@ -121,8 +122,8 @@ public class ApiRequest {
       return apiAction.getMethod();
    }
 
-   public Class<?> getClazz() {
-      return apiAction.getClazz();
+   public Type getResponseType() {
+      return apiAction.getResponseType();
    }
 
    public ApiAction getApiAction() {
