@@ -1,8 +1,12 @@
 package com.pennassurancesoftware.cloudns.dto;
 
+import java.io.Serializable;
+
 import com.google.gson.annotations.SerializedName;
 
-public class SoaDetails {
+public class SoaDetails implements Serializable {
+   private static final long serialVersionUID = -2986676766495270632L;
+
    private String adminMail;
    @SerializedName("defaultTTL")
    private Integer defaultTtl;
@@ -16,7 +20,7 @@ public class SoaDetails {
    @Override
    public String toString() {
       final StringBuffer result = new StringBuffer();
-      result.append( String.format( "Serial Number: %s", serialNumber ) );
+      result.append( String.format( "Serial Number: %s, Default TTL: %s", serialNumber, defaultTtl ) );
       return result.toString();
    }
 

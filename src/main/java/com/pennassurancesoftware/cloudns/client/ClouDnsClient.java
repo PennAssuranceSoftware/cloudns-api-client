@@ -43,6 +43,7 @@ import com.google.gson.JsonSyntaxException;
 import com.pennassurancesoftware.cloudns.ClouDns;
 import com.pennassurancesoftware.cloudns.dto.DomainZone;
 import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
+import com.pennassurancesoftware.cloudns.dto.DynamicUrl;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
 import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
 import com.pennassurancesoftware.cloudns.dto.Record;
@@ -170,6 +171,13 @@ public class ClouDnsClient implements ClouDns {
    }
 
    @Override
+   public DynamicUrl getDomainZoneRecordDynamicUrl( String domainName, Integer recordId ) {
+      final Object[] params = { domainName, recordId };
+      final DynamicUrl result = ( DynamicUrl )perform( new ApiRequest( ApiAction.GET_DOMAIN_ZONE_RECORD_DYNAMIC_URL, params ) ).getData();
+      return result;
+   }
+
+   @Override
    public SoaDetails getSoaDetails( String domainName ) {
       final Object[] params = { domainName };
       final SoaDetails result = ( SoaDetails )perform( new ApiRequest( ApiAction.GET_DOMAIN_ZONE_SOA_DETAILS, params ) ).getData();
@@ -206,6 +214,19 @@ public class ClouDnsClient implements ClouDns {
       final Response result = ( Response )perform( new ApiRequest( ApiAction.MODIFY_DOMAIN_ZONE_RECORD, params ) ).getData();
       validateResponse( result );
 
+   }
+
+   @Override
+   public void modifySoaDetails( String domainName, SoaDetails details ) {
+      final String primaryNs = details.getPrimaryNs();
+      final String adminMail = details.getAdminMail();
+      final Integer refresh = details.getRefresh();
+      final Integer retry = details.getRetry();
+      final Integer expire = details.getExpire();
+      final Integer defaultTtl = details.getDefaultTtl();
+      final Object[] params = { domainName, primaryNs, adminMail, refresh, retry, expire, defaultTtl };
+      final Response result = ( Response )perform( new ApiRequest( ApiAction.MODIFY_DOMAIN_ZONE_SOA_DETAILS, params ) ).getData();
+      validateResponse( result );
    }
 
    @Override

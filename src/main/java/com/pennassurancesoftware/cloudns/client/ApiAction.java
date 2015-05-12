@@ -26,6 +26,7 @@ import java.util.Map;
 import com.google.gson.reflect.TypeToken;
 import com.pennassurancesoftware.cloudns.dto.DomainZone;
 import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
+import com.pennassurancesoftware.cloudns.dto.DynamicUrl;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
 import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
 import com.pennassurancesoftware.cloudns.dto.Record;
@@ -55,6 +56,9 @@ public enum ApiAction {
          RequestMethod.GET, Response.class),
    COPY_DOMAIN_ZONE_RECORDS("/copy-records.json?domain-name=%s&from-domain=%s&delete-current-records=%s", RequestMethod.GET, Response.class),
    GET_DOMAIN_ZONE_SOA_DETAILS("/soa-details.json?&domain-name=%s", RequestMethod.GET, SoaDetails.class),
+   MODIFY_DOMAIN_ZONE_SOA_DETAILS("/modify-soa.json?domain-name=%s&primary-ns=%s&admin-mail=%s&refresh=%s&retry=%s&expire=%s&default-ttl=%s",
+         RequestMethod.GET, Response.class),
+   GET_DOMAIN_ZONE_RECORD_DYNAMIC_URL("/get-dynamic-url.json?domain-name=%s&record-id=%s", RequestMethod.GET, DynamicUrl.class),
 
    ;
 

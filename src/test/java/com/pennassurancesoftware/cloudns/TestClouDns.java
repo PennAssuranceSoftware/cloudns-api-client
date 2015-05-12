@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 import com.pennassurancesoftware.cloudns.client.ClouDnsClient;
 import com.pennassurancesoftware.cloudns.dto.DomainZone;
 import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
+import com.pennassurancesoftware.cloudns.dto.DynamicUrl;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
 import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
 import com.pennassurancesoftware.cloudns.dto.Record;
@@ -68,6 +69,18 @@ public class TestClouDns {
       System.out.println( "Modified Domain Records: " + client.getDomainZoneRecords( domainName ) );
    }
 
+   @Test(groups = { "integration", "modify-domain" }, enabled = true, dependsOnGroups = "get-domain", priority = 49)
+   public void testModifyDomainZoneSoaDetails() throws Exception {
+      // Fixture
+      final String domainName = "domain.com";
+
+      // Call
+      final SoaDetails modify = client.getSoaDetails( domainName );
+      modify.setDefaultTtl( 21600 );
+      client.modifySoaDetails( domainName, modify );
+      System.out.println( "Modified SOA: " + client.getSoaDetails( domainName ) );
+   }
+
    @Test(groups = { "integration", "modify-domain" }, enabled = true, dependsOnGroups = "get-domain", priority = 48)
    public void testCopyDomainZoneRecords() throws Exception {
       // Fixture
@@ -114,6 +127,27 @@ public class TestClouDns {
 
       // Assert
       System.out.println( "SOA: " + soa );
+   }
+
+   @Test(groups = { "integration", "get-domain" }, enabled = true, dependsOnGroups = "create-domain")
+   public void testGetDomainZoneRecordDynamicUrl() throws Exception {
+      // Fixture
+      final String domainName = "domain.com";
+
+      // Call
+      Record a = null;
+      for( Record record : client.getDomainZoneRecords( domainName ) ) {
+         if( RecordType.A.equals( record.getType() ) ) {
+            a = record;
+            break;
+         }
+      }
+      Assert.assertNotNull( a, "No A record found." );
+      final DynamicUrl result = client.getDomainZoneRecordDynamicUrl( domainName, a.getId() );
+
+      // Assert
+      Assert.assertNotNull( result, "No Dynamic URL found." );
+      System.out.println( "Dynamic URL: " + result );
    }
 
    @Test(groups = { "integration", "get-domain" }, enabled = true, dependsOnGroups = "create-domain")
@@ -197,7 +231,14 @@ public class TestClouDns {
       record.setRecord( "proxy-16f8311e.pennassurancesoftware.svc.tutum.io" );
       record.setTtl( 3600 );
 
+      final Record record2 = new Record();
+      record2.setType( RecordType.A );
+      record2.setHost( "dynamic-test" );
+      record2.setRecord( "69.242.33.252" );
+      record2.setTtl( 3600 );
+
       // Call
       client.addDomainZoneRecord( domainName, record );
+      client.addDomainZoneRecord( domainName, record2 );
    }
 }

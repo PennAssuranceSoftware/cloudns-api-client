@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.pennassurancesoftware.cloudns.dto.DomainZone;
 import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
+import com.pennassurancesoftware.cloudns.dto.DynamicUrl;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
 import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
 import com.pennassurancesoftware.cloudns.dto.Record;
@@ -138,4 +139,23 @@ public interface ClouDns {
     * @return SOA Details
     */
    SoaDetails getSoaDetails( String domainName );
+
+   /**
+    * 
+    * <a href="https://www.cloudns.net/api-help/records/modify-soa-domain-zone/">Modify Domain Zone SOA Details Documentation</a>
+    * 
+    * @param domainName Domain Zone to modify SOA details of
+    * @param details Details to update to
+    */
+   void modifySoaDetails( String domainName, SoaDetails details );
+
+   /**
+    * 
+    * <a href="https://www.cloudns.net/api-help/records/get-dynamic-url/">Gety Domain Zone Record Dynamic URL Documentation</a>
+    * 
+    * @param domainName Domain Zone that contains the record to get the Dynamic URL update URL for
+    * @param recordId Id of the record to get the Dynamic URL for
+    * @return Dynamic URL that can be used to update to the calling machine's IP address
+    */
+   DynamicUrl getDomainZoneRecordDynamicUrl( String domainName, Integer recordId );
 }
