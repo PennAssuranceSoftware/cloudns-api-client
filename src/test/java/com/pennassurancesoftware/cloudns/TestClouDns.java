@@ -6,25 +6,67 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.pennassurancesoftware.cloudns.client.ClouDnsClient;
+import com.pennassurancesoftware.cloudns.dto.DomainZone;
+import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
+import com.pennassurancesoftware.cloudns.type.ZoneType;
 
 public class TestClouDns {
+   private static final String AUTH_ID = "445";
+   private static final String AUTH_PASSWORD = "temp1010";
+
+   private ClouDns client = new ClouDnsClient( AUTH_ID, AUTH_PASSWORD );
 
    @Test(groups = { "integration" }, enabled = true)
-   public void testCreateCnameRecord() throws Exception {
-      // https://api.cloudns.net/dns/login.json?auth-id=445&auth-password=london10
-
-      // Fixture
-      final String authId = "445";
-      final String authPassword = "temp1010";
+   public void testGetAvailableNameServers() throws Exception {
+      // https://api.cloudns.net/dns/login.json?auth-id=445&auth-password=temp1010      
 
       // Call
-      final ClouDns client = new ClouDnsClient( authId, authPassword );
       final List<NameServer> result = client.getAvailableNameServers();
 
       // Assert
       Assert.assertNotNull( result, "No result returned" );
       Assert.assertFalse( result.isEmpty(), "No Available Name Servers found." );
+      System.out.println( result );
+   }
+
+   @Test(groups = { "integration" }, enabled = true)
+   public void testGetDomainZoneStatus() throws Exception {
+      // Call
+      final DomainZoneStats result = client.getDomainZoneStats();
+
+      // Assert
+      Assert.assertNotNull( result, "No result returned" );
+      System.out.println( result );
+   }
+
+   @Test(groups = { "integration" }, enabled = true)
+   public void testRegisterDomainZone() throws Exception {
+      // Fixture
+      final String domainName = "domain.com";
+      final ZoneType type = ZoneType.Master;
+
+      // Call
+      client.registerDomainZone( domainName, type );
+   }
+
+   @Test(groups = { "integration" }, enabled = true, dependsOnMethods = "testRegisterDomainZone")
+   public void testDeleteDomainZone() throws Exception {
+      // Fixture
+      final String domainName = "domain.com";
+
+      // Call
+      client.deleteDomainZone( domainName );
+   }
+
+   @Test(groups = { "integration" }, enabled = true, dependsOnMethods = "testRegisterDomainZone")
+   public void testGetDomainZones() throws Exception {
+      // Fixture
+
+      // Call
+      final List<DomainZone> result = client.getDomainZones();
+
+      // Assert
       System.out.println( result );
    }
 }

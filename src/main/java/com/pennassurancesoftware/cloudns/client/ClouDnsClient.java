@@ -39,14 +39,19 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.pennassurancesoftware.cloudns.ClouDns;
+import com.pennassurancesoftware.cloudns.dto.DomainZone;
+import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
+import com.pennassurancesoftware.cloudns.dto.Response;
 import com.pennassurancesoftware.cloudns.exception.ClouDnsException;
 import com.pennassurancesoftware.cloudns.exception.RequestUnsuccessfulException;
+import com.pennassurancesoftware.cloudns.type.ZoneType;
 
 /** ClouDNS client wrapper methods Implementation */
 public class ClouDnsClient implements ClouDns {
-   private Gson deserialize;
+   private static final Integer DEFAULT_PAGE_SIZE = 100;
 
+   private Gson deserialize;
    private JsonParser jsonParser;
    private Logger LOG = LoggerFactory.getLogger( ClouDnsClient.class );
    private Gson serialize;
@@ -81,13 +86,36 @@ public class ClouDnsClient implements ClouDns {
    }
 
    @Override
+   public void deleteDomainZone( String domainName ) {
+      final Object[] params = { domainName };
+      final Response result = ( Response )perform( new ApiRequest( ApiAction.DELETE_DOMAIN_ZONE, params ) ).getData();
+      validateResponse( result );
+   }
+
+   @Override
    public List<NameServer> getAvailableNameServers() {
       final NameServer[] result = ( NameServer[] )perform( new ApiRequest( ApiAction.AVAILABLE_NAME_SERVERS ) ).getData();
       return Arrays.asList( result );
    }
 
-   private String getAuthParamString() {
-      return String.format( "auth-id=%s&auth-password=%s", authId, authPassword );
+   @Override
+   public List<DomainZone> getDomainZones() {
+      final Object[] params = { 1, DEFAULT_PAGE_SIZE };
+      final DomainZone[] result = ( DomainZone[] )perform( new ApiRequest( ApiAction.GET_DOMAIN_ZONES, params ) ).getData();
+      return Arrays.asList( result );
+   }
+
+   @Override
+   public DomainZoneStats getDomainZoneStats() {
+      final DomainZoneStats result = ( DomainZoneStats )perform( new ApiRequest( ApiAction.GET_DOMAIN_ZONE_STATS ) ).getData();
+      return result;
+   }
+
+   @Override
+   public void registerDomainZone( String domainName, ZoneType type ) {
+      final Object[] params = { domainName, type.value() };
+      final Response result = ( Response )perform( new ApiRequest( ApiAction.REGISTER_DOMAIN_ZONE, params ) ).getData();
+      validateResponse( result );
    }
 
    private String createPath( ApiRequest request ) {
@@ -96,7 +124,7 @@ public class ClouDnsClient implements ClouDns {
       path = path.startsWith( "/" ) ? path.substring( 1 ) : path;
       final StringBuffer result = new StringBuffer();
       result.append( String.format( "/dns/%s", path ) );
-      result.append( path.contains( "?" ) ? "" : "?" );
+      result.append( path.contains( "?" ) ? "&" : "?" );
       result.append( getAuthParamString() );
       return result.toString();
    }
@@ -232,6 +260,10 @@ public class ClouDnsClient implements ClouDns {
       return response;
    }
 
+   private String getAuthParamString() {
+      return String.format( "auth-id=%s&auth-password=%s", authId, authPassword );
+   }
+
    private Header[] getRequestHeaders() {
       Header[] headers =
       {
@@ -339,6 +371,12 @@ public class ClouDnsClient implements ClouDns {
       }
       catch( Exception exception ) {
          throw new RuntimeException( "Error reading String Entity", exception );
+      }
+   }
+
+   private void validateResponse( Response result ) {
+      if( !result.isSuccess() ) {
+         throw new RuntimeException( String.format( "Reponse failure: %s", result.getStatusDescription() ) );
       }
    }
 }
