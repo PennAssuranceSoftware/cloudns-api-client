@@ -5,6 +5,7 @@ import java.util.List;
 import com.pennassurancesoftware.cloudns.dto.DomainZone;
 import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
+import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
 import com.pennassurancesoftware.cloudns.type.ZoneType;
 
 /**
@@ -61,4 +62,23 @@ public interface ClouDns {
     * @return Statistics about account with ClouDNS
     */
    DomainZoneStats getDomainZoneStats();
+   
+   /**
+    * 
+    * <a href="https://www.cloudns.net/api-help/dns/domain-update-status/">Domain Zone Update Status Documentation</a>
+    * 
+    * 
+    * @param domainName Domain Zone to get the list of update statuses for
+    * @return List of Name Servers and their corresponding update status
+    */
+   List<NameServerUpdateStatus> getDomainZoneUpdateStatus( String domainName );
+   
+   /**
+    * 
+    * <a href="https://www.cloudns.net/api-help/dns/domain-is-updated/">Domain Zone Is Updated Documentation</a>
+    * 
+    * @param domainName Domain Zone to check if updates have been fully applied
+    * @return Flag that indicates the zone is updated
+    */
+   boolean isDomainZoneUpdated( String domainName );
 }

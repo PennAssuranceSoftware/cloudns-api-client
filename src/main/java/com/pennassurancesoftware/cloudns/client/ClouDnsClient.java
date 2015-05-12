@@ -42,6 +42,7 @@ import com.pennassurancesoftware.cloudns.ClouDns;
 import com.pennassurancesoftware.cloudns.dto.DomainZone;
 import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
+import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
 import com.pennassurancesoftware.cloudns.dto.Response;
 import com.pennassurancesoftware.cloudns.exception.ClouDnsException;
 import com.pennassurancesoftware.cloudns.exception.RequestUnsuccessfulException;
@@ -108,6 +109,20 @@ public class ClouDnsClient implements ClouDns {
    @Override
    public DomainZoneStats getDomainZoneStats() {
       final DomainZoneStats result = ( DomainZoneStats )perform( new ApiRequest( ApiAction.GET_DOMAIN_ZONE_STATS ) ).getData();
+      return result;
+   }
+
+   @Override
+   public List<NameServerUpdateStatus> getDomainZoneUpdateStatus( String domainName ) {
+      final Object[] params = { domainName };
+      final NameServerUpdateStatus[] result = ( NameServerUpdateStatus[] )perform( new ApiRequest( ApiAction.GET_DOMAIN_ZONE_UPDATE_STATUS, params ) ).getData();
+      return Arrays.asList( result );
+   }
+
+   @Override
+   public boolean isDomainZoneUpdated( String domainName ) {
+      final Object[] params = { domainName };
+      final Boolean result = ( Boolean )perform( new ApiRequest( ApiAction.GET_DOMAIN_ZONE_IS_UPDATED, params ) ).getData();
       return result;
    }
 

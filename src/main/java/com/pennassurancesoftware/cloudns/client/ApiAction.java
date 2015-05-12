@@ -23,6 +23,7 @@ package com.pennassurancesoftware.cloudns.client;
 import com.pennassurancesoftware.cloudns.dto.DomainZone;
 import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
+import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
 import com.pennassurancesoftware.cloudns.dto.Response;
 
 /**
@@ -36,6 +37,8 @@ public enum ApiAction {
    GET_DOMAIN_ZONES("/list-zones.json?page=%s&rows-per-page=%s", RequestMethod.GET, DomainZone[].class),
    GET_DOMAIN_ZONES_PAGE_COUNT("/get-pages-count.json?&rows-per-page=%s", RequestMethod.GET, Integer.class),
    GET_DOMAIN_ZONE_STATS("/get-zones-stats.json", RequestMethod.GET, DomainZoneStats.class),
+   GET_DOMAIN_ZONE_UPDATE_STATUS("/update-status.json?domain-name=%s", RequestMethod.GET, NameServerUpdateStatus[].class),
+   GET_DOMAIN_ZONE_IS_UPDATED("/is-updated.json?domain-name=%s", RequestMethod.GET, Boolean.class),
 
    //   GET_ACTION("/action/%s", RequestMethod.GET, Action.class),
    //   PROVIDERS("/provider", RequestMethod.GET, Providers.class),
