@@ -7,6 +7,7 @@ import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
 import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
 import com.pennassurancesoftware.cloudns.dto.Record;
+import com.pennassurancesoftware.cloudns.dto.SoaDetails;
 import com.pennassurancesoftware.cloudns.type.ZoneType;
 
 /**
@@ -118,4 +119,23 @@ public interface ClouDns {
     * @param record Record with ID specified and values to update to
     */
    void modifyDomainZoneRecord( String domainName, Record record );
+
+   /**
+    * 
+    * <a href="https://www.cloudns.net/api-help/records/copy-records/">Copy Domain Zone Records Documentation</a>
+    * 
+    * @param domainName Domain Zone the records will be copied into
+    * @param fromDomainName Domain Zone records will be copied from
+    * @param deleteCurrentRecords Flag that indicates the records in the domain zone should be deleted when doing this action
+    */
+   void copyDomainZoneRecords( String domainName, String fromDomainName, boolean deleteCurrentRecords );
+
+   /**
+    * 
+    * <a href="https://www.cloudns.net/api-help/records/soa-details-domain-zone/">Domain Zone SOA Details Documentation</a>
+    * 
+    * @param domainName Domain Zone to get SOA details for
+    * @return SOA Details
+    */
+   SoaDetails getSoaDetails( String domainName );
 }

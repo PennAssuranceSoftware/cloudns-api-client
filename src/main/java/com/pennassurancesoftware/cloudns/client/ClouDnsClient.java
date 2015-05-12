@@ -47,6 +47,7 @@ import com.pennassurancesoftware.cloudns.dto.NameServer;
 import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
 import com.pennassurancesoftware.cloudns.dto.Record;
 import com.pennassurancesoftware.cloudns.dto.Response;
+import com.pennassurancesoftware.cloudns.dto.SoaDetails;
 import com.pennassurancesoftware.cloudns.exception.ClouDnsException;
 import com.pennassurancesoftware.cloudns.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.cloudns.type.ZoneType;
@@ -114,6 +115,13 @@ public class ClouDnsClient implements ClouDns {
    }
 
    @Override
+   public void copyDomainZoneRecords( String domainName, String fromDomainName, boolean deleteCurrentRecords ) {
+      final Object[] params = { domainName, fromDomainName, deleteCurrentRecords ? 1 : 0 };
+      final Response result = ( Response )perform( new ApiRequest( ApiAction.COPY_DOMAIN_ZONE_RECORDS, params ) ).getData();
+      validateResponse( result );
+   }
+
+   @Override
    public void deleteDomainZone( String domainName ) {
       final Object[] params = { domainName };
       final Response result = ( Response )perform( new ApiRequest( ApiAction.DELETE_DOMAIN_ZONE, params ) ).getData();
@@ -159,6 +167,13 @@ public class ClouDnsClient implements ClouDns {
       final Object[] params = { domainName };
       final NameServerUpdateStatus[] result = ( NameServerUpdateStatus[] )perform( new ApiRequest( ApiAction.GET_DOMAIN_ZONE_UPDATE_STATUS, params ) ).getData();
       return Arrays.asList( result );
+   }
+
+   @Override
+   public SoaDetails getSoaDetails( String domainName ) {
+      final Object[] params = { domainName };
+      final SoaDetails result = ( SoaDetails )perform( new ApiRequest( ApiAction.GET_DOMAIN_ZONE_SOA_DETAILS, params ) ).getData();
+      return result;
    }
 
    @Override

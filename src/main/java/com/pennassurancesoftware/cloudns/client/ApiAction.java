@@ -30,6 +30,7 @@ import com.pennassurancesoftware.cloudns.dto.NameServer;
 import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
 import com.pennassurancesoftware.cloudns.dto.Record;
 import com.pennassurancesoftware.cloudns.dto.Response;
+import com.pennassurancesoftware.cloudns.dto.SoaDetails;
 
 /**
  * Enumeration of Tutum RESTful resource information.
@@ -52,7 +53,9 @@ public enum ApiAction {
    MODIFY_DOMAIN_ZONE_RECORD(
          "/mod-record.json?domain-name=%s&record-id=%s&host=%s&record=%s&ttl=%s&priority=%s&weight=%s&port=%s&frame=%s&frame-title=%s&frame-keywords=%s&frame-description=%s&save-path=%s&redirect-type=%s&mail=%s&txt=%s&algorithm=%s&fptype=%s",
          RequestMethod.GET, Response.class),
-         
+   COPY_DOMAIN_ZONE_RECORDS("/copy-records.json?domain-name=%s&from-domain=%s&delete-current-records=%s", RequestMethod.GET, Response.class),
+   GET_DOMAIN_ZONE_SOA_DETAILS("/soa-details.json?&domain-name=%s", RequestMethod.GET, SoaDetails.class),
+
    ;
 
    private String path;

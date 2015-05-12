@@ -11,6 +11,7 @@ import com.pennassurancesoftware.cloudns.dto.DomainZoneStats;
 import com.pennassurancesoftware.cloudns.dto.NameServer;
 import com.pennassurancesoftware.cloudns.dto.NameServerUpdateStatus;
 import com.pennassurancesoftware.cloudns.dto.Record;
+import com.pennassurancesoftware.cloudns.dto.SoaDetails;
 import com.pennassurancesoftware.cloudns.type.RecordType;
 import com.pennassurancesoftware.cloudns.type.ZoneType;
 
@@ -24,9 +25,11 @@ public class TestClouDns {
    public void testDeleteDomainZone() throws Exception {
       // Fixture
       final String domainName = "domain.com";
+      final String domainName2 = "domain2.com";
 
       // Call
       client.deleteDomainZone( domainName );
+      client.deleteDomainZone( domainName2 );
    }
 
    @Test(groups = { "integration" }, enabled = true, dependsOnGroups = "get-domain", priority = 50)
@@ -65,6 +68,18 @@ public class TestClouDns {
       System.out.println( "Modified Domain Records: " + client.getDomainZoneRecords( domainName ) );
    }
 
+   @Test(groups = { "integration", "modify-domain" }, enabled = true, dependsOnGroups = "get-domain", priority = 48)
+   public void testCopyDomainZoneRecords() throws Exception {
+      // Fixture
+      final String fromDomainName = "domain.com";
+      final String domainName = "domain2.com";
+      final boolean deleteCurrentRecords = false;
+
+      // Call
+      client.copyDomainZoneRecords( domainName, fromDomainName, deleteCurrentRecords );
+      System.out.println( "Copied Domain Records: " + client.getDomainZoneRecords( domainName ) );
+   }
+
    @Test(groups = { "integration" }, enabled = true)
    public void testGetAvailableNameServers() throws Exception {
       // https://api.cloudns.net/dns/login.json?auth-id=445&auth-password=temp1010
@@ -87,6 +102,18 @@ public class TestClouDns {
 
       // Assert
       System.out.println( result );
+   }
+
+   @Test(groups = { "integration", "get-domain" }, enabled = true, dependsOnGroups = "create-domain")
+   public void testGetDomainZoneSoaDetails() throws Exception {
+      // Fixture
+      final String domainName = "domain.com";
+
+      // Call
+      final SoaDetails soa = client.getSoaDetails( domainName );
+
+      // Assert
+      System.out.println( "SOA: " + soa );
    }
 
    @Test(groups = { "integration", "get-domain" }, enabled = true, dependsOnGroups = "create-domain")
@@ -144,6 +171,16 @@ public class TestClouDns {
    public void testRegisterDomainZone() throws Exception {
       // Fixture
       final String domainName = "domain.com";
+      final ZoneType type = ZoneType.Master;
+
+      // Call
+      client.registerDomainZone( domainName, type );
+   }
+
+   @Test(groups = { "integration", "create-domain" }, enabled = true, priority = 1)
+   public void testRegisterDomainZone2() throws Exception {
+      // Fixture
+      final String domainName = "domain2.com";
       final ZoneType type = ZoneType.Master;
 
       // Call
