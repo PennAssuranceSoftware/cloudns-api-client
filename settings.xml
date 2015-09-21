@@ -1,0 +1,19 @@
+<settings>
+    <profiles>
+        <profile>
+            <id>cloudns-api-client</id>
+            <properties>
+                <gpg.homedir>/home/r</gpg.homedir>
+                <gpg.keyname>B50B4163</gpg.keyname>
+                <gpg.passphrase>london10</gpg.passphrase>
+            </properties>
+        </profile>
+    </profiles>
+    <servers>
+        <server>
+            <id>oss.sonatype.org</id>
+            <username>jeromebridge</username>
+            <password>london10</password>
+        </server>
+    </servers>
+</settings>
