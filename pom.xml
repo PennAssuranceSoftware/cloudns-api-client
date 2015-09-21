@@ -214,7 +214,9 @@
 		</pluginManagement>
 	</build>
 
-	<!-- How To Setup Maven Central Releases: -->
+	<!-- How To Setup Maven Central Releases: http://www.yegor256.com/2014/08/19/how-to-release-to-maven-central.html -->
+	<!-- I was getting the error: gpg: decryption failed: Bad session key -->
+	<!-- I needed to force Ubuntu to use GPG2 instead of PGP: https://wiki.debian.org/Teams/GnuPG/UsingGnuPGv2 -->
 	<profiles>
 		<profile>
 			<id>release</id>
